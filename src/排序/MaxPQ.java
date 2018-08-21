@@ -28,7 +28,7 @@ public class MaxPQ<Key extends Comparable<Key>> {
         return max;
     }
     private boolean less(int i,int j){
-        return i<j;
+        return pq[i].compareTo(pq[j])<0;
     }
     private void exch(int i, int j){
         Key temp = pq[i];
