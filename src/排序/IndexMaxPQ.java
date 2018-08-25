@@ -4,16 +4,16 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class IndexMaxPQ<Key extends Comparable<Key>> implements Iterable<Integer> {
-    private int N;           // number of elements on PQ
-    private int[] pq;        // binary heap using 1-based indexing
-    private int[] qp;        // inverse of pq - qp[pq[i]] = pq[qp[i]] = i
-    private Key[] keys;      // keys[i] = priority of i
+    private int N;           // pq中元素个数
+    private int[] pq;        // 优先级堆
+    private int[] qp;        // pq的反置 满足qp[pq[i]] = pq[qp[i]] = i
+    private Key[] keys;      // 索引-元素，k-v对
 
     public IndexMaxPQ(int NMAX) {
         keys = (Key[]) new Comparable[NMAX + 1];    // make this of length NMAX??
         pq   = new int[NMAX + 1];
         qp   = new int[NMAX + 1];                   // make this of length NMAX??
-        for (int i = 0; i <= NMAX; i++) qp[i] = -1;
+        for (int i = 0; i <= NMAX; i++) qp[i] = -1;//一开始pq没元素，所以qp值置-1
     }
 
     // is the priority queue empty?
@@ -21,7 +21,7 @@ public class IndexMaxPQ<Key extends Comparable<Key>> implements Iterable<Integer
 
     // is the index k in the priority queue?
     public boolean contains(int k) {
-        return qp[k] != -1;
+        return qp[k] != -1; //qp[k] 是索引k在pq中的位置，不是-1就存在
     }
 
     // number of elements in the priority queue
@@ -31,9 +31,9 @@ public class IndexMaxPQ<Key extends Comparable<Key>> implements Iterable<Integer
 
     // associate key with index k
     public void insert(int k, Key key) {
-        if (contains(k)) throw new RuntimeException("item is already in pq");
+        if (contains(k)) throw new RuntimeException("item is already in pq"); //k存在
         N++;
-        qp[k] = N;
+        qp[k] = N; //新的位置赋值给qp[k]
         pq[N] = k;
         keys[k] = key;
         swim(N);
@@ -42,22 +42,22 @@ public class IndexMaxPQ<Key extends Comparable<Key>> implements Iterable<Integer
     // return index of a maximal key
     public int max() {
         if (N == 0) throw new RuntimeException("Priority queue underflow");
-        return pq[1];
+        return pq[1];//顶部为最大值的索引
     }
 
     // return a maximal key
     public Key maxKey() {
         if (N == 0) throw new RuntimeException("Priority queue underflow");
-        return keys[pq[1]];
+        return keys[pq[1]];//索引对应的值
     }
 
     // delete a maximal key and returns its associated index
     public int delMax() {
         if (N == 0) throw new RuntimeException("Priority queue underflow");
-        int max = pq[1];
+        int max = pq[1]; //最大值索引
         exch(1, N--);
         sink(1);
-        qp[max] = -1;            // delete
+        qp[max] = -1;            // delete，删除最大值索引
         keys[pq[N+1]] = null;    // to help with garbage collection
         pq[N+1] = -1;            // not needed
         return max;
@@ -72,7 +72,7 @@ public class IndexMaxPQ<Key extends Comparable<Key>> implements Iterable<Integer
     // return key associated with index k
     public Key get(int k) {
         if (!contains(k)) throw new RuntimeException("item is not in pq");
-        else return keys[pq[k]];
+        else return keys[pq[k]]; //存疑 感觉应该返回keys[k]？
     }
 
     // change the key associated with index k
